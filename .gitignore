@@ -13,3 +13,5 @@ __pycache__/
 
 # wheel_pid_test output
 wheel_pid_*.csv
+*.csv
+*.png

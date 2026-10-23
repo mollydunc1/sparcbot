@@ -20,6 +20,7 @@ setup(
         'console_scripts': [
             'keyboard_teleop = sparcbot_teleop.keyboard_teleop:main',
             'pwm_teleop = sparcbot_teleop.pwm_teleop:main',
+            'bump_teleop = sparcbot_teleop.bump_teleop:main'
         ],
     },
 )

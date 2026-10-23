@@ -3,15 +3,11 @@
 #
 # Read by:
 #   * the ROS 2 nodes (passed in by sparcbot_bringup/launch/robot.launch.py)
-#   * the standalone C++ bench tests/tools in sparcbot_core
-#     (through sparcbot::config::leftMotor(), leftWheelFeedforward(), ...)
 #
-# Standard ROS 2 parameter-file layout:  <node_name>: ros__parameters: {...}
 # Nested keys become dotted parameter names, e.g. left_motor.gpio_dir.
 #
 # Rules of thumb:
 #   * Write every floating-point value with a decimal point (1.0, not 1).
-#   * No value has a hidden default in code
 # =============================================================================
 
 # -----------------------------------------------------------------------------
@@ -22,7 +18,7 @@ sparcbot_driver:
     control_rate_hz: 100.0      # encoder read + /wheel_states publish rate
     cmd_timeout_s: 0.1          # coast if no /wheel_cmd for this long (<= 0 disables)
 
-    wheel_radius_m: 0.010
+    wheel_radius_m: 0.050
     counts_per_rev: 500.0       # encoder counts per gearbox output revolution
     velocity_cutoff_hz: 8.0     # first-order low-pass on wheel velocity (<= 0 disables)
 
@@ -53,44 +49,47 @@ sparcbot_driver:
       encoder_sign: -1
 
 # -----------------------------------------------------------------------------
-# Differential-drive kinematics: /cmd_vel <-> wheel velocities.
+# Robot geometry shared by every node
 # -----------------------------------------------------------------------------
-diff_drive:
+/**:
   ros__parameters:
-    base_width_m: 0.175         # wheel separation (track width)
+    base_width_m: 0.175         # wheel-to-wheel distance (measure on your robot)
 
 # -----------------------------------------------------------------------------
 # Wheel velocity controller (feedforward + PID), one block per wheel.
-# Feedforward values come from characterization.
 # -----------------------------------------------------------------------------
 wheel_controller:
   ros__parameters:
+    # CSV file for WheelController.log() (call it inside compute()); '' disables logging.
+    # Use an absolute path, e.g. /home/sparcbot/logs/ff_sweep.csv
+    log_file: ''
+
     left:
-      kp: 0.0   # TODO: tune
-      ki: 0.0   # TODO: tune
-      kd: 0.0   # TODO: tune
+      kp: 0.0
+      ki: 0.0
+      kd: 0.0
       feedforward:
-        forward_static: 0.0701
-        forward_velocity_gain: 1.739
-        reverse_static: 0.062
-        reverse_velocity_gain: 1.7162
-        forward_breakaway: 0.15
-        reverse_breakaway: 0.13
-        stopped_velocity_threshold: 0.005
+        forward_static: 0.0
+        forward_velocity_gain: 0.0
+        reverse_static: 0.0
+        reverse_velocity_gain: 0.0
+        forward_breakaway: 0.0
+        reverse_breakaway: 0.0
+        stopped_velocity_threshold: 0.025
         max_command: 1.0
-        zero_velocity_threshold: 0.0001
+        zero_velocity_threshold: 0.0005
 
     right:
-      kp: 0.0   # TODO: tune
-      ki: 0.0   # TODO: tune
-      kd: 0.0   # TODO: tune
+      kp: 0.0
+      ki: 0.0
+      kd: 0.0
       feedforward:
-        forward_static: 0.033
-        forward_velocity_gain: 1.639
-        reverse_static: 0.031
-        reverse_velocity_gain: 1.700
-        forward_breakaway: 0.10
-        reverse_breakaway: 0.13
-        stopped_velocity_threshold: 0.005
+        forward_static: 0.0
+        forward_velocity_gain: 0.0
+        reverse_static: 0.0
+        reverse_velocity_gain: 0.0
+        forward_breakaway: 0.0
+        reverse_breakaway: 0.0
+        stopped_velocity_threshold: 0.025
         max_command: 1.0
-        zero_velocity_threshold: 0.0001
+        zero_velocity_threshold: 0.0005

@@ -1,14 +1,15 @@
 # Test fixtures
 
-`wheel_velocity_controller_reference.csv` holds the outputs of the reference
-wheel velocity controller (feedforward + PID) for 10 test sequences:
-2 wheels (feedforward values from `config/sparcbot.yaml`) × 5 gain sets, 240
-steps each, with a controller reset at step 120. Every row lists the inputs
-(`target_m_s`, `measured_m_s`, `dt_s`, gains) and the expected outputs
-(`error_m_s`, `feedforward_command`, `feedback_command`, `command`).
+`wheel_controller_reference.csv` holds the outputs of a reference wheel velocity
+controller (feedforward + deadband + PID) for 5 test sequences, one per gain set,
+240 steps each, with a controller reset at step 120. Every row is one control
+step for both wheels: the shared `dt_s` and gains, and for each wheel the inputs
+(`*_target_m_s`, `*_measured_m_s`) and the expected outputs (`*_error_m_s`,
+`*_feedforward_command`, `*_feedback_command`, `*_command`).
 
-The tests replay the inputs through `wheel_velocity_controller.py` and check
-the outputs match to 1e-9.
+The tests replay the inputs through `WheelController.compute()` in
+`wheel_controller.py` and check the outputs match to 1e-9.
 
-If you change the feedforward values in `sparcbot.yaml`, regenerate this file;
-otherwise the feedforward checks will fail.
+The feedforward values are fixed test data (listed in `test/reference.py`),
+independent of `config/sparcbot.yaml`; measuring your own robot does not affect
+these tests.
