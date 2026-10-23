@@ -27,8 +27,6 @@ class PID:
     def __init__(self, gains: PIDGains):
         self.gains = gains
 
-        # TODO:
-
     def compute(self, error: float, dt_s: float) -> float:
         """Return the PID output for this time step.
 
@@ -40,12 +38,23 @@ class PID:
             raise ValueError('PID.compute requires dt_s > 0')
 
         # TODO:
-        raise NotImplementedError('TODO: implement PID.compute()')
+         # --- Proportional term ---
+        p = self.gains.kp * error
+
+        # --- Integral term ---
+        self.integral += error * dt_s
+        i = self.gains.ki * self.integral
+
+        # --- Derivative term ---
+        d = self.gains.kd * (error - self.prev_error) / dt_s
+        self.prev_error = error
+
+        # --- Total PID output ---
+        return p + i + d
 
     def reset(self) -> None:
-        """Forget all history (called when the robot stops or is reset)."""
-        # TODO:
-
+        self.integral = 0.0
+        self.prev_error = 0.0
 
 class WheelVelocityController:
     """Feedforward + PID velocity controller for one wheel."""
@@ -61,9 +70,16 @@ class WheelVelocityController:
         dt_s: float,
     ) -> WheelVelocityControllerOutput:
         """Return the motor command (and its parts) for this time step."""
-        # TODO:
-        raise NotImplementedError('TODO: implement WheelVelocityController.compute()')
+        u_ff = self.feedforward.compute(target_velocity_m_s)
 
+        error = target_velocity_m_s - measured_velocity_m_s
+        u_pid = self.pid.compute(error, dt_s)
+        u = u_ff + u_pid
+        return WheelVelocityControllerOutput(
+            command=u,
+            ff=u_ff,
+            pid=u_pid,
+        )
     def reset(self) -> None:
         """Reset the controller (the feedforward has no state)."""
-        # TODO:
+        self.pid.reset()

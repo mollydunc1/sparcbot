@@ -59,4 +59,24 @@ class WheelFeedforward:
             measured_velocity_m_s: current wheel velocity [m/s] (used to detect a stopped wheel).
         """
         # TODO:
-        raise NotImplementedError('TODO: implement WheelFeedforward.compute()')
+        config = self.config
+        v = target_velocity_m_s
+
+        # 1. Forward or reverse model
+        if v > 0.0:
+            u = config.forward_static + config.forward_velocity_gain * v
+        else:
+            u = -(config.reverse_static + config.reverse_velocity_gain * abs(v))
+
+        # 2. Breakaway if wheel is basically stopped
+        if abs(measured_velocity_m_s) < config.stopped_velocity_threshold:
+            if v > config.zero_velocity_threshold:
+                u = max(u, config.forward_breakaway)
+            elif v < -config.zero_velocity_threshold:
+                u = min(u, -config.reverse_breakaway)
+
+        # 3. Clamp to [-max_command, max_command]
+        u = _clamp(u, -config.max_command, config.max_command)
+
+        return u
+
