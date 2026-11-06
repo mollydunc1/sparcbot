@@ -134,7 +134,7 @@ MotorConfig rightMotor()
 WheelGeometryConfig wheelGeometry()
 {
     WheelGeometryConfig config;
-    config.radius_m = get<double>(section("sparcbot_driver"), "wheel_radius_m", "sparcbot_driver");
+    config.radius_m = get<double>(section("/**"), "wheel_radius_m", "/**");
     return config;
 }
 
@@ -151,7 +151,7 @@ WheelStateEstimatorConfig wheelStateEstimator()
 DifferentialDriveKinematicsConfig differentialDriveKinematics()
 {
     DifferentialDriveKinematicsConfig config;
-    config.base_width_m = get<double>(section("diff_drive"), "base_width_m", "diff_drive");
+    config.base_width_m = get<double>(section("/**"), "base_width_m", "/**");
     return config;
 }
 

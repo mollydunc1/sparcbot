@@ -18,7 +18,6 @@ sparcbot_driver:
     control_rate_hz: 100.0      # encoder read + /wheel_states publish rate
     cmd_timeout_s: 0.1          # coast if no /wheel_cmd for this long (<= 0 disables)
 
-    wheel_radius_m: 0.050
     counts_per_rev: 500.0       # encoder counts per gearbox output revolution
     velocity_cutoff_hz: 8.0     # first-order low-pass on wheel velocity (<= 0 disables)
 
@@ -49,11 +48,22 @@ sparcbot_driver:
       encoder_sign: -1
 
 # -----------------------------------------------------------------------------
-# Robot geometry shared by every node
+# Robot geometry shared by every node (`/**` applies to all nodes).
 # -----------------------------------------------------------------------------
 /**:
   ros__parameters:
     base_width_m: 0.175         # wheel-to-wheel distance (measure on your robot)
+    wheel_radius_m: 0.040       # drive wheel radius
+
+# -----------------------------------------------------------------------------
+# Encoder odometry (/odom and the odom -> base_link transform).
+# Also uses base_width_m and wheel_radius_m from the shared block above.
+# -----------------------------------------------------------------------------
+odometry:
+  ros__parameters:
+    odom_frame_id: odom
+    base_frame_id: base_link
+    publish_tf: true            # set false if another node is doing it
 
 # -----------------------------------------------------------------------------
 # Wheel velocity controller (feedforward + PID), one block per wheel.

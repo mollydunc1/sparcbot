@@ -35,6 +35,7 @@ set(SPARCBOT_SOURCES
     src/config/robot_config.cpp
     src/hardware/motor.cpp
     src/estimation/wheel_state_estimator.cpp
+    src/estimation/odometry.cpp
     src/kinematics/differential_drive_kinematics.cpp
 )
 

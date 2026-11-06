@@ -5,7 +5,7 @@
 //   /cmd_vel (body v, w)        -> inverse kinematics -> /wheel_targets (left, right m/s)
 //   /wheel_states (measured)    -> forward kinematics -> /body_velocity (measured v, w)
 //
-// This is also where encoder odometry (/odom + odom->base_link TF)
+// Encoder odometry (/odom + odom->base_link TF) lives in odometry_node.
 //
 // Topics
 //   sub  cmd_vel         geometry_msgs/Twist
@@ -78,8 +78,6 @@ private:
         out.twist.linear.x = v.linear_m_s;
         out.twist.angular.z = v.angular_rad_s;
         body_velocity_pub_->publish(out);
-
-        // TODO(odometry): integrate v, w over msg.dt_s here and publish /odom + TF.
     }
 
     std::unique_ptr<DifferentialDriveKinematics> kinematics_;

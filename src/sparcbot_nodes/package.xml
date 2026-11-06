@@ -3,7 +3,7 @@
 <package format="3">
   <name>sparcbot_nodes</name>
   <version>0.1.0</version>
-  <description>SPARCBot C++ ROS 2 nodes: hardware driver and differential-drive kinematics.</description>
+  <description>SPARCBot C++ ROS 2 nodes: hardware driver, differential-drive kinematics and odometry.</description>
   <maintainer email="sparcbot@example.com">SPARCBot</maintainer>
   <license>TODO</license>
 
@@ -12,6 +12,8 @@
   <depend>rclcpp</depend>
   <depend>std_srvs</depend>
   <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>tf2_ros</depend>
   <depend>sparcbot_interfaces</depend>
   <depend>sparcbot_core</depend>
 

@@ -12,6 +12,8 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(tf2_ros REQUIRED)
 find_package(sparcbot_interfaces REQUIRED)
 find_package(sparcbot_core REQUIRED)
 
@@ -31,11 +33,22 @@ target_link_libraries(diff_drive_node
   sparcbot_core::sparcbot_core
 )
 
-foreach(target sparcbot_driver_node diff_drive_node)
+add_executable(odometry_node src/odometry_node.cpp)
+target_link_libraries(odometry_node
+  rclcpp::rclcpp
+  ${std_srvs_TARGETS}
+  ${geometry_msgs_TARGETS}
+  ${nav_msgs_TARGETS}
+  ${sparcbot_interfaces_TARGETS}
+  tf2_ros::tf2_ros
+  sparcbot_core::sparcbot_core
+)
+
+foreach(target sparcbot_driver_node diff_drive_node odometry_node)
   target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic)
 endforeach()
 
-install(TARGETS sparcbot_driver_node diff_drive_node
+install(TARGETS sparcbot_driver_node diff_drive_node odometry_node
   DESTINATION lib/${PROJECT_NAME}
 )
 

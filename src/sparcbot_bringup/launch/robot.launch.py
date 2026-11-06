@@ -1,4 +1,4 @@
-"""Start the SPARCBot stack: driver + diff_drive + wheel_controller.
+"""Start the SPARCBot stack: driver + diff_drive + odometry + wheel_controller.
 
     ros2 launch sparcbot_bringup robot.launch.py
 
@@ -42,6 +42,14 @@ def generate_launch_description():
             package='sparcbot_nodes',
             executable='diff_drive_node',
             name='diff_drive',
+            parameters=[params_file],
+            output='screen',
+            emulate_tty=True),
+
+        Node(
+            package='sparcbot_nodes',
+            executable='odometry_node',
+            name='odometry',
             parameters=[params_file],
             output='screen',
             emulate_tty=True),

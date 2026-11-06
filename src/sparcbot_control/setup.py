@@ -22,6 +22,7 @@ setup(
             'wheel_controller = sparcbot_control.wheel_controller_node:main',
             'linear_vel_step_test = sparcbot_control.linear_vel_step_test:main',
             'angular_vel_step_test = sparcbot_control.angular_vel_step_test:main',
+            'circle_tracker = sparcbot_control.circle_tracker:main',
         ],
     },
 )

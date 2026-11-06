@@ -12,6 +12,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/WheelVelocities.msg"
   "msg/WheelControllerOutput.msg"
   "msg/WheelControllerDebug.msg"
+  "srv/SetPose.srv"
   DEPENDENCIES std_msgs
 )
 
