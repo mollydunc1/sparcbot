@@ -107,13 +107,71 @@ class WheelController:
         # and the state set up in __init__. Use self.log(...) to record data.
 
         # BEGIN SOLUTION
+            
+        outputs = []
 
+        for side in (LEFT, RIGHT):
+            cfg = self.config[side]
 
+            target = target_velocity_m_s[side]
+            measured = measured_velocity_m_s[side]
 
-        left_wheel_output = WheelControllerOutput(command=0.0) #TODO set command to your final controller output
+            # --- 1. Error ---
+            error = target - measured
 
-        right_wheel_output = WheelControllerOutput(command=0.0) #TODO set command to your final controller output
+            # --- 2. PID ---
+            # Proportional
+            p = cfg.kp * error
+
+            # Integral with anti-windup
+            self.error_integral[side] += error * dt_s
+            i = cfg.ki * self.error_integral[side]
+
+            # Derivative
+            if self.first_step:
+                d = 0.0
+            else:
+                d = cfg.kd * (error - self.previous_error[side]) / dt_s
+
+            u_pid = p + i + d
+
+            # --- 3. Feedforward ---
+            if target > 0.0:
+                u_ff = cfg.forward_static + cfg.forward_velocity_gain * target
+            else:
+                u_ff = -(cfg.reverse_static + cfg.reverse_velocity_gain * abs(target))
+
+            # Breakaway if wheel is basically stopped
+            if abs(measured) < cfg.stopped_velocity_threshold:
+                if target > cfg.zero_velocity_threshold:
+                    u_ff = max(u_ff, cfg.forward_breakaway)
+                elif target < -cfg.zero_velocity_threshold:
+                    u_ff = min(u_ff, -cfg.reverse_breakaway)
+
+            # --- 4. Combine ---
+            u = u_pid + u_ff
+
+            # --- 5. Clamp ---
+            u = max(-cfg.max_command, min(cfg.max_command, u))
+
+            # --- Save state ---
+            self.previous_error[side] = error
+            self.previous_command[side] = u
+
+            # --- 6. Build output ---
+            outputs.append(WheelControllerOutput(
+                error_m_s=error,
+                feedforward_command=u_ff,
+                feedback_command=u_pid,
+                command=u,
+            ))
+
+        self.first_step = False
+
+        left_wheel_output = outputs[LEFT]
+        right_wheel_output = outputs[RIGHT]
         return [left_wheel_output, right_wheel_output]
+
         # END SOLUTION
 
     def reset(self) -> None:
